@@ -1,0 +1,10 @@
+{
+    "manifest_version": 3,
+    "name": "Nevidni Ščit",
+    "description": "Extension for visualizing tracking information on a webpage",
+    "version": "1.0",
+    "action": {
+      "default_popup": "index.html",
+      "default_icon": "scitIcon.png"
+    }
+  }
