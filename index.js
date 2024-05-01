@@ -31,11 +31,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 li.className = 'list-group-item d-flex justify-content-between align-items-center';
                 
                 li.textContent = `Domain: ${filtCookie.domain}`;
-
+                var buttonDiv = document.createElement('div');
+                buttonDiv.className = 'button-container';
+                
                 var allowBtn = document.createElement('button');
                 allowBtn.type = 'button';
                 allowBtn.className = 'btn btn-success';
-                allowBtn.textContent = 'Dovoli';
+                allowBtn.innerHTML = '<i class="fas fa-check"></i>';
 
                 // dodaj logic za allowanje cookijev :)
                 allowBtn.addEventListener('click', function() {
@@ -45,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var disableBtn = document.createElement('button');
                 disableBtn.type = 'button';
                 disableBtn.className = 'btn btn-danger';
-                disableBtn.textContent = 'Onemogoči';
+                disableBtn.innerHTML = '<i class="fas fa-times"></i>';
 
                 //Dodaj logic za disablanje cookijev 
                 disableBtn.addEventListener('click', function() {
@@ -53,8 +55,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
 
-                li.appendChild(allowBtn);
-                li.appendChild(disableBtn);
+                buttonDiv.appendChild(allowBtn);
+                buttonDiv.appendChild(disableBtn);
+                li.appendChild(buttonDiv);
+
                 trackerList.appendChild(li);
             }
         });
