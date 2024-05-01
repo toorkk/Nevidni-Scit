@@ -43,3 +43,23 @@ body, html {
     background-color: #f3aabb;
     cursor: pointer;
 }
+
+/*Button stil start*/
+.btn {
+    margin-left: 10px;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #fff;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+}
+/*Button stil end*/
