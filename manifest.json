@@ -10,5 +10,11 @@
     "action": {
       "default_popup": "index.html",
       "default_icon": "scitIcon.png"
+    },
+    "icons": {
+      "128": "icon128.png",
+      "64":"icon64.png",
+      "32":"icon32.png"
+  
     }
   }

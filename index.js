@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
     chrome.cookies.getAll({}, function(cookies) {
-        var cookieList = document.getElementById('cookieList');
+        var trackerList = document.getElementById('trackerList');
         cookies.forEach(function(cookie) {
             if (!cookie.hostOnly) {
                 var li = document.createElement('li');
-                li.textContent = `Domain: ${cookie.domain}, ${cookie.name}`;
-                cookieList.appendChild(li);
+                li.className = 'list-group-item';
+                li.textContent = `Domain: ${cookie.domain}, Name: ${cookie.name}, Value: ${cookie.value}`;
+                trackerList.appendChild(li);
             }
         });
     });
