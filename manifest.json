@@ -2,10 +2,10 @@
     "manifest_version": 3,
     "name": "Nevidni Ščit",
     "description": "Extension for visualizing tracking information on a webpage",
-    "permissions": ["cookies", "tabs", "activeTab", "webRequest", "declarativeNetRequest", "storage"],
+    "permissions": ["cookies", "tabs", "activeTab", "webRequest", "declarativeNetRequestWithHostAccess", "storage"],
     "host_permissions": [
       "<all_urls>"
-  ],
+    ],
     "version": "1.0",
     "action": {
       "default_popup": "index.html",
