@@ -1,73 +1,68 @@
-body, html {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #7ca2c7;
-    font-family: 'Montserrat', sans-serif;
-    background-image: url('images/background.png');
-    background-size: cover;
-    background-position: center;
-
+body,
+html {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #7ca2c7;
+  font-family: 'Montserrat', sans-serif;
+  background-image: url('images/background.png');
+  background-size: cover;
+  background-position: center;
 }
-.title{
-    color: rgb(0, 0, 0);
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
-    background-color: whitesmoke;
-    padding: 10px;
-
+.title {
+  color: rgb(0, 0, 0);
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  background-color: whitesmoke;
+  padding: 10px;
 }
 /* Stil za main container */
 .container {
-    padding: 20px;
-
+  padding: 20px;
 }
 
 /* Stil za seznam v katerem so trackerji */
 .list-group {
-    padding: 0;
-    margin-top: 20px;
-
+  padding: 0;
+  margin-top: 20px;
 }
 
 /* Stil trackerjev */
 .list-group-item {
-    background-color: rgba(245, 245, 245, 0.447); /* Barva za list item */
-    width: 360px;
-    border: none;
-    margin-bottom: 12px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-
+  background-color: rgba(245, 245, 245, 0.447); /* Barva za list item */
+  width: 360px;
+  border: none;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .list-group-item:hover {
-    background-color: #c68292;
-    cursor: pointer;
-    transition: 0.3s;
+  background-color: #c68292;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 /*Button stil start*/
 
 .button-container {
-    display: flex;
-    gap: 15px;
+  display: flex;
+  gap: 15px;
 }
 
 .btn-success {
-    background-color: #28a745;
-    border-color: #28a745;
-    color: #fff;
+  background-color: #28a745;
+  border-color: #28a745;
+  color: #fff;
 }
 
 .btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
-    color: #fff;
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: #fff;
 }
 /*Button stil end*/
 
-
 .red {
-    background-color: red;
+  background-color: red;
 }
