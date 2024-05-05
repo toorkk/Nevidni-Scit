@@ -1,14 +1,48 @@
-var counter = 0;
+var DynamicRuleIdCounter;
 
-function setColours() {
+function LoadBlockedDomains() {
     chrome.storage.local.get('blockedDomains', function(data) {
         let blockedDomains = data.blockedDomains ? JSON.parse(data.blockedDomains) : { domains: [] };
 
-        blockedDomains.domains.forEach(function(domain){
-            let li = document.getElementById(domain.domain);
-            li.className = li.className + " red";
-        });});
+        blockedList = document.getElementById("blockedTrackerList");
+
+        let doit = blockedDomains.domains;
+
+        console.log('blockedDomains: ' + JSON.stringify(doit));
+
+        chrome.declarativeNetRequest.getDynamicRules().then(response => console.log("dynamicRules:" + JSON.stringify(response)));
+
+
+        doit.forEach(function(element) {
+            var li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.id = element.domain;
+            
+            li.textContent = element.domain;
+            var buttonDiv = document.createElement('div');
+            buttonDiv.className = 'button-container';
+            
+            var allowBtn = document.createElement('button');
+            allowBtn.type = 'button';
+            allowBtn.className = 'btn btn-success';
+            allowBtn.innerHTML = '<i class="fas fa-check"></i>';
+
+            // dodaj logic za allowanje cookijev :)
+            allowBtn.addEventListener('click', function() {
+                RemoveFromBlockList(element.domain);
+            });
+
+            buttonDiv.appendChild(allowBtn);
+            li.appendChild(buttonDiv);
+
+            blockedList.appendChild(li);
+        });
+
+    });
+
 }
+
+LoadBlockedDomains();
 
 function AddToBlockList(domain) {
     chrome.storage.local.get('blockedDomains', function(data) {
@@ -23,17 +57,31 @@ function AddToBlockList(domain) {
         }
 
             if(!domainExists){
-                counter = counter + 2;
-                let domainSet = {domain: domain, id: counter};
+
+                let DynamicRuleIdCounter = 1;
+
+                chrome.storage.sync.get(['DynamicRuleIdCounter'], function(items) {
+
+                    if (items && items.DynamicRuleIdCounter !== undefined) {
+                        DynamicRuleIdCounter = parseInt(items.DynamicRuleIdCounter);
+                    }
+                
+                    console.log('dric :' + DynamicRuleIdCounter);
+                });
+                
+                DynamicRuleIdCounter = DynamicRuleIdCounter + 2;
+                let domainSet = {domain: domain, id: DynamicRuleIdCounter};
                 blockedDomains.domains.push(domainSet);
                 
                 let li = document.getElementById(domain);
-                li.className = li.className + " red";
+                li.classList.add("red");
 
                 chrome.storage.local.set({ 'blockedDomains': JSON.stringify(blockedDomains) }, function() {
                     console.log('Domain added:', domain);
                     console.log(blockedDomains);
                 });
+
+                chrome.storage.sync.set({'DynamicRuleIdCounter': DynamicRuleIdCounter});
 
                 addBlockedDomains(domainSet.domain, domainSet.id);
 
@@ -58,15 +106,13 @@ function RemoveFromBlockList(domain) {
             blockedDomains.domains.splice(index, 1);
 
             let li = document.getElementById(domain);
-            li.className = 'list-group-item d-flex justify-content-between align-items-center';
-            location.reload();
 
             chrome.storage.local.set({ 'blockedDomains': JSON.stringify(blockedDomains) }, function() {
                 console.log('Domain removed:', domain);
                 console.log(blockedDomains);
             });
             
-        setColours();
+        //setColours();
         
         } else {
             console.log('Domain not found:', domain);
@@ -235,8 +281,6 @@ function addToCookieList(cookieHeader) {
             break; 
         }
     }
-
-    setColours();
 
 }
 
