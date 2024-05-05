@@ -1,44 +1,51 @@
 <!DOCTYPE html>
 <html lang="sl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nevidni Ščit</title>
-    <link href="library/bootstrap-5.3.3-dist/css/bootstrap.css" rel="stylesheet">
+    <link
+      href="library/bootstrap-5.3.3-dist/css/bootstrap.css"
+      rel="stylesheet"
+    />
     <script src="library/bootstrap-5.3.3-dist/js/bootstrap.js"></script>
     <script src="library/vis-4.21.0/dist/vis-network.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+      rel="stylesheet"
+    />
 
-    <link href="style.css" rel="stylesheet">
-    
-
-</head>
-<body>    
+    <link href="style.css" rel="stylesheet" />
+    <style>
+      #mynetwork {
+        min-width: 360px;
+        height: 360px;
+        border: 1px solid #000000;
+        margin-top: 20px;
+        background-color: gainsboro;
+      }
+    </style>
+  </head>
+  <body>
     <div class="container">
-        <div class="row">
-            <div class="col-12 col-lg-10 mx-auto">
-                
-                <h1 class="mb-3 title"><img src="icon32.png" alt="Nevidni Ščit"> NEVIDNI ŠČIT</h1>
-                <a href="visualisation.html" class="nav-link title">VIZUALIZACIJA</a> <br/>
-                
-                <h2 class="mb-3 title">BLOKIRANE DOMENE</h2>
-                <ul class="list-group overflow-auto" id="blockedTrackerList">
+      <div class="row">
+        <div class="col-12 col-lg-10 mx-auto">
+          <h1 class="mb-3 title">
+            <img src="icon32.png" alt="Nevidni Ščit" /> NEVIDNI ŠČIT
+          </h1>
+          <!-- <a href="visualisation.html" class="nav-link title">VIZUALIZACIJA</a> -->
+          <br />
 
-                </ul>
+          <h2 class="mb-3 title">BLOKIRANE DOMENE</h2>
+          <ul class="list-group overflow-auto" id="blockedTrackerList"></ul>
 
-                <h2 class="mb-3 title">NAJDENE TRACKING DOMENE</h2>
-                <ul class="list-group overflow-auto" id="trackerList">
-
-                </ul>
-
-            <div id="mynetwork">
-
-            </div>
-
-            </div>
+          <h2 class="mb-3 title">NAJDENE TRACKING DOMENE</h2>
+          <ul class="list-group overflow-auto" id="trackerList"></ul>
+          <h2 class="mb-3 title">VIZUALIZACIJA</h2>
+          <div class="container" id="mynetwork"></div>
         </div>
+      </div>
     </div>
     <script src="index.js"></script>
-
-</body>
+  </body>
 </html>
