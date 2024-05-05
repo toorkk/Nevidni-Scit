@@ -1,73 +1,5 @@
 var counter = 0;
 
-document.addEventListener('DOMContentLoaded', function() {
-    chrome.cookies.getAll({}, function(cookies) {
-
-        var filteredCookies = [];
-
-        cookies.forEach(function(cookie) {
-            var exists = false;
-
-            filteredCookies.forEach(function(filteredCookie) {
-                if(cookie.domain == filteredCookie.domain){
-                    exists = true;
-                }
-            })
-
-            if(!exists){
-                filteredCookies.push(cookie);
-            }
-        });
-
-        filteredCookies.sort((a, b) => a.domain.localeCompare(b.domain));
-        
-        var trackerList = document.getElementById('trackerList');
-
-        filteredCookies.forEach(function(filtCookie) {
-            if (!filtCookie.hostOnly) {
-                var li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center';
-                li.id = filtCookie.domain;
-                
-                li.textContent = `${filtCookie.domain}`;
-                var buttonDiv = document.createElement('div');
-                buttonDiv.className = 'button-container';
-                
-                var allowBtn = document.createElement('button');
-                allowBtn.type = 'button';
-                allowBtn.className = 'btn btn-success';
-                allowBtn.innerHTML = '<i class="fas fa-check"></i>';
-
-                // dodaj logic za allowanje cookijev :)
-                allowBtn.addEventListener('click', function() {
-                    RemoveFromBlockList(filtCookie.domain);
-                });
-
-                var disableBtn = document.createElement('button');
-                disableBtn.type = 'button';
-                disableBtn.className = 'btn btn-danger';
-                disableBtn.innerHTML = '<i class="fas fa-times"></i>';
-
-                //Dodaj logic za disablanje cookijev 
-                disableBtn.addEventListener('click', function() {
-                    AddToBlockList(filtCookie.domain);
-                });
-
-
-                buttonDiv.appendChild(allowBtn);
-                buttonDiv.appendChild(disableBtn);
-                li.appendChild(buttonDiv);
-
-                trackerList.appendChild(li);
-            }
-        });
-        
-        setColours();
-
-    });
-});
-
-
 function setColours() {
     chrome.storage.local.get('blockedDomains', function(data) {
         let blockedDomains = data.blockedDomains ? JSON.parse(data.blockedDomains) : { domains: [] };
@@ -93,7 +25,6 @@ function AddToBlockList(domain) {
             if(!domainExists){
                 counter = counter + 2;
                 let domainSet = {domain: domain, id: counter};
-                console.log(blockedDomains);
                 blockedDomains.domains.push(domainSet);
                 
                 let li = document.getElementById(domain);
@@ -145,8 +76,10 @@ function RemoveFromBlockList(domain) {
 
 function addBlockedDomains(domain, id) {
 
+    if(domain.charAt(0) == "."){
     domain = domain.slice(1);
     console.log('sliced domain: ' + domain);
+    }
                 
     try{
     chrome.declarativeNetRequest.updateDynamicRules({
@@ -248,19 +181,71 @@ function addToCookieList(cookieHeader) {
         
         if (cookie.toLowerCase().startsWith('domain=')) {
             let domain = cookie.substring('Domain='.length);
+
+            var exists = false;
+
+            filteredCookies.forEach(function(filteredCookie) {
+                if(domain == filteredCookie){
+                    exists = true;
+                }
+            })
+
+            if(exists) {continue;}
+
+            filteredCookies.push(domain);
+
+
             let cookieList = document.getElementById('trackerList');
-            let listItem = document.createElement('li');
-            listItem.className = 'list-group-item';
-            listItem.textContent = domain;
-            cookieList.appendChild(listItem);
+
+            var li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.id = domain;
+            
+            li.textContent = domain;
+            var buttonDiv = document.createElement('div');
+            buttonDiv.className = 'button-container';
+            
+            var allowBtn = document.createElement('button');
+            allowBtn.type = 'button';
+            allowBtn.className = 'btn btn-success';
+            allowBtn.innerHTML = '<i class="fas fa-check"></i>';
+
+            // dodaj logic za allowanje cookijev :)
+            allowBtn.addEventListener('click', function() {
+                RemoveFromBlockList(domain);
+            });
+
+            var disableBtn = document.createElement('button');
+            disableBtn.type = 'button';
+            disableBtn.className = 'btn btn-danger';
+            disableBtn.innerHTML = '<i class="fas fa-times"></i>';
+
+            //Dodaj logic za disablanje cookijev 
+            disableBtn.addEventListener('click', function() {
+                AddToBlockList(domain);
+            });
+
+
+            buttonDiv.appendChild(allowBtn);
+            buttonDiv.appendChild(disableBtn);
+            li.appendChild(buttonDiv);
+
+            cookieList.appendChild(li);
+
             break; 
         }
     }
+
+    setColours();
+
 }
 
+var filteredCookies;
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOMContentLoaded event triggered");
+    filteredCookies = [];
+
     startListeners(); 
 });
 
