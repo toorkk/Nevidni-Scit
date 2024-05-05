@@ -1,5 +1,3 @@
-var DynamicRuleIdCounter;
-
 function LoadBlockedDomains() {
     chrome.storage.local.get('blockedDomains', function(data) {
         let blockedDomains = data.blockedDomains ? JSON.parse(data.blockedDomains) : { domains: [] };
@@ -30,6 +28,7 @@ function LoadBlockedDomains() {
             // dodaj logic za allowanje cookijev :)
             allowBtn.addEventListener('click', function() {
                 RemoveFromBlockList(element.domain);
+                location.reload();
             });
 
             buttonDiv.appendChild(allowBtn);
@@ -70,7 +69,7 @@ function AddToBlockList(domain) {
                 });
                 
                 DynamicRuleIdCounter = DynamicRuleIdCounter + 2;
-                let domainSet = {domain: domain, id: DynamicRuleIdCounter};
+                let domainSet = {domain: domain, id: Math.floor(Math.random() * (1000000 - 1) ) + 1};
                 blockedDomains.domains.push(domainSet);
                 
                 let li = document.getElementById(domain);
@@ -177,6 +176,8 @@ function removeBlockedDomain(id) {
 
 //------KODA ZA PRIDOBIVANJE TRACKING COOKIJEV-------//
 
+function laufaj() {
+
 function startListeners() {
     let extraInfoSpecRequest = ['requestHeaders'];
     if (chrome.webRequest.OnBeforeSendHeadersOptions && chrome.webRequest.OnBeforeSendHeadersOptions.hasOwnProperty('EXTRA_HEADERS')) {
@@ -221,12 +222,19 @@ function checkForSetCookiesInResponse(details) {
 
 function addToCookieList(cookieHeader) {
     let cookies = cookieHeader.split(';');
+
     
     for (let cookie of cookies) {
+
         cookie = cookie.trim();
         
         if (cookie.toLowerCase().startsWith('domain=')) {
             let domain = cookie.substring('Domain='.length);
+
+            if (!domainsAdded.includes(domain)) {
+                domainsAdded.push(domain);
+                addToVisualization(domain);      
+              }
 
             var exists = false;
 
@@ -251,16 +259,6 @@ function addToCookieList(cookieHeader) {
             var buttonDiv = document.createElement('div');
             buttonDiv.className = 'button-container';
             
-            var allowBtn = document.createElement('button');
-            allowBtn.type = 'button';
-            allowBtn.className = 'btn btn-success';
-            allowBtn.innerHTML = '<i class="fas fa-check"></i>';
-
-            // dodaj logic za allowanje cookijev :)
-            allowBtn.addEventListener('click', function() {
-                RemoveFromBlockList(domain);
-            });
-
             var disableBtn = document.createElement('button');
             disableBtn.type = 'button';
             disableBtn.className = 'btn btn-danger';
@@ -271,26 +269,103 @@ function addToCookieList(cookieHeader) {
                 AddToBlockList(domain);
             });
 
-
-            buttonDiv.appendChild(allowBtn);
             buttonDiv.appendChild(disableBtn);
             li.appendChild(buttonDiv);
 
             cookieList.appendChild(li);
 
             break; 
-        }
+            }
     }
+}
+
+var filteredCookies = [];
+var domainsAdded = [];
+
+startListeners();
 
 }
 
-var filteredCookies;
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("DOMContentLoaded event triggered");
-    filteredCookies = [];
-
-    startListeners(); 
-});
+chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
+    if (changeInfo.status == 'complete' && tab.active) {
+  
+        console.log("DOMContentLoaded event triggered");
+        laufaj();  
+    }
+  });
 
 //---------------KONEC KODE ZA PRIDOBIVANJE TRACKING COOKIJEV --------------//
+
+var nodes = new vis.DataSet([]);
+var edges = new vis.DataSet([]);
+var network;
+
+document.addEventListener('DOMContentLoaded', function () {
+  var container = document.getElementById('mynetwork');
+  if (!container) {
+    console.error('Visualization container not found');
+    return;
+  }
+
+  var data = {
+    nodes: nodes,
+    edges: edges,
+  };
+
+  var options = {
+    physics: {
+      enabled: true,
+      solver: 'forceAtlas2Based',
+      forceAtlas2Based: {
+        gravitationalConstant: -300,
+        centralGravity: 0.01,
+        springConstant: 0.08,
+        damping: 1,
+        avoidOverlap: 1,
+      },
+      timestep: 0.5,
+      stabilization: {
+        iterations: 1000,
+      },
+      hierarchicalRepulsion: {
+        nodeDistance: 10,
+      },
+    },
+    nodes: {
+      font: {
+        size: 20,
+        color: '#FFFFFF',
+      },
+      shape: 'circle',
+      size: 15,
+    },
+    edges: {
+      color: '#FFFFFF',
+    },
+  };
+
+  network = new vis.Network(container, data, options);
+
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    var currentURL = new URL(tabs[0].url).hostname;
+    addToVisualization(currentURL, true);
+  });
+});
+
+function addToVisualization(domain, isMainDomain) {
+  if (!nodes.get(domain)) {
+    var color = isMainDomain ? '#FFD700' : '#66CCCC';
+    nodes.add({
+      id: domain,
+      label: domain,
+      color: color,
+    });
+
+    if (!isMainDomain) {
+      edges.add({
+        from: domain,
+        to: nodes.getIds()[0],
+      });
+    }
+  }
+}
