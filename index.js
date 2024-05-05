@@ -289,29 +289,59 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   var options = {
-    layout: {
-      hierarchical: {
-        direction: 'UD',
-        sortMethod: 'directed',
+    physics: {
+      enabled: true,
+      solver: 'forceAtlas2Based',
+      forceAtlas2Based: {
+        gravitationalConstant: -300,
+        centralGravity: 0.01,
+        springConstant: 0.08,
+        damping: 1,
+        avoidOverlap: 1,
+      },
+      timestep: 0.5,
+      stabilization: {
+        iterations: 1000,
+      },
+      hierarchicalRepulsion: {
+        nodeDistance: 10,
       },
     },
-    physics: {
-      hierarchicalRepulsion: {
-        nodeDistance: 150,
+    nodes: {
+      font: {
+        size: 20,
+        color: '#FFFFFF',
       },
+      shape: 'circle',
+      size: 15,
+    },
+    edges: {
+      color: '#FFFFFF',
     },
   };
 
   network = new vis.Network(container, data, options);
-  startListeners();
+
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    var currentURL = new URL(tabs[0].url).hostname;
+    addToVisualization(currentURL, true);
+  });
 });
 
-function addToVisualization(domain) {
+function addToVisualization(domain, isMainDomain) {
   if (!nodes.get(domain)) {
+    var color = isMainDomain ? '#FFD700' : '#66CCCC';
     nodes.add({
       id: domain,
       label: domain,
-      color: '#7BE141',
+      color: color,
     });
+
+    if (!isMainDomain) {
+      edges.add({
+        from: domain,
+        to: nodes.getIds()[0],
+      });
+    }
   }
 }

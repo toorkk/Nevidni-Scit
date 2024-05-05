@@ -66,3 +66,12 @@ html {
 .red {
   background-color: red;
 }
+
+/* Visualize css */
+#mynetwork {
+  background-image: url('images/visualizeBackground.jpg');
+  background-size: cover;
+  background-position: center;
+  border: 1px solid lightgray;
+}
+/* Visualize css */
