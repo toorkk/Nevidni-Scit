@@ -43,7 +43,18 @@ function LoadBlockedDomains() {
 
 LoadBlockedDomains();
 
+function deleteCookiesForDomain(domain) {
+    chrome.cookies.getAll({domain: domain}, function(cookies) {
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i];
+            chrome.cookies.remove({url: "https://" + cookie.domain + cookie.path, name: cookie.name});
+        }
+    });
+}
+
 function AddToBlockList(domain) {
+    deleteCookiesForDomain(domain);
+    
     chrome.storage.local.get('blockedDomains', function(data) {
         let blockedDomains = data.blockedDomains ? JSON.parse(data.blockedDomains) : { domains: [] };
 
